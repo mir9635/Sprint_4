@@ -1,5 +1,6 @@
 package locators;
 
+
 import org.openqa.selenium.By;
 
 public class PageObject {
@@ -7,6 +8,9 @@ public class PageObject {
 //
 //    Для логотипа Yandex
 //    By logoYandexAlt = By.cssSelector("img[alt='Yandex']");
+
+    //    Куки кнопка Ok
+    public static By cookieOkButton = By.className("App_CookieConsent__1yUIN");
 //
 //    Для логотипа Scooter
 //    By logoScooterAlt = By.cssSelector("img[alt='Scooter']");
@@ -73,7 +77,8 @@ public class PageObject {
 //
 //    Для номера шага 1
 //    By step1Circle = By.xpath("//div[@class='Home_StatusCircle__3_aTp' and text()='1']");
-//
+
+    //
 //    Для описания шага 1
 //    By step1Description = By.xpath("//div[@class='Home_StatusCircle__3_aTp' and text()='1']/following-sibling::div/div[@class='Home_StatusDescription__3WGl5']");
 //
@@ -105,51 +110,49 @@ public class PageObject {
 //    By blockTitle = By.cssSelector("div.Home_SubHeader__zwi_E");
 //
 //    Для Сколько это стоит? И как оплатить?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-0']");
-//
-//    Для раскрывающегося списка 1 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-0']/p");
-//
-//    Для Хочу сразу несколько самокатов! Так можно?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-1']");
-//
-//    Для раскрывающегося списка 2 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-1']/p");
-//
+    // public static By buttonQuestion0 = By.xpath("//div[@id='accordion__heading-0']");
+    public static By buttonQuestion0 = By.id("accordion__heading-0");
+    //    Для раскрывающегося списка 0 элемента
+    public static By textAnswer0 = By.id("accordion__panel-0");
+    //    Для Хочу сразу несколько самокатов! Так можно?
+    public static By buttonQuestion1 = By.id("accordion__heading-1");
+    //    Для раскрывающегося списка 2 элемента
+    public static By textAnswer1 = By.id("accordion__panel-1");
+    //
 //    Для Как рассчитывается время аренды?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-2']");
-//
-//    Для раскрывающегося списка 3 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-2']/p");
-//
+    public static By buttonQuestion2 = By.id("accordion__heading-2");
+    //
+//    Для раскрывающегося списка 2 элемента
+    public static By textAnswer2 = By.id("accordion__panel-2");
+    //
 //    Для Можно ли заказать самокат прямо на сегодня?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-3']");
-//
-//    Для раскрывающегося списка 4 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-3']/p");
-//
+    public static By buttonQuestion3 = By.id("accordion__heading-3");
+    //
+//    Для раскрывающегося списка 3 элемента
+    public static By textAnswer3 = By.id("accordion__panel-3");
+    //
 //    Для Можно ли продлить заказ или вернуть самокат раньше?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-4']");
-//
-//    Для раскрывающегося списка 5 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-4']/p");
-//
+    public static By buttonQuestion4 = By.id("accordion__heading-4");
+    //
+//    Для раскрывающегося списка 4 элемента
+    public static By textAnswer4 = By.id("accordion__panel-4");
+    //
 //    Для Вы привозите зарядку вместе с самокатом?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-5']");
-//
-//    Для раскрывающегося списка 6 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-5']/p");
-//
+    public static By buttonQuestion5 = By.id("accordion__heading-5");
+    //
+//    Для раскрывающегося списка 5 элемента
+    public static By textAnswer5 = By.id("accordion__panel-5");
+    //
 //    Для Можно ли отменить заказ?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-6']");
-//
-//    Для раскрывающегося списка 7 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-6']/p");
-//
+    public static By buttonQuestion6 = By.id("accordion__heading-6");
+    //
+//    Для раскрывающегося списка 6 элемента
+    public static By textAnswer6 = By.id("accordion__panel-6");
+    //
 //    Для Я жизу за МКАДом, привезёте?
-//    By buttonQuestion5 = By.xpath("//div[@id='accordion__heading-7']");
-//
-//    Для раскрывающегося списка 8 элемента
-//    By textAnswer5 = By.xpath("//div[@id='accordion__panel-7']/p");
+    public static By buttonQuestion7 = By.id("accordion__heading-7");
+    //
+//    Для раскрывающегося списка 7 элемента
+    public static By textAnswer7 = By.id("accordion__panel-7");
 
 }

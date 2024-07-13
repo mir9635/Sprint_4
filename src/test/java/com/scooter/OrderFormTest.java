@@ -1,6 +1,12 @@
 package com.scooter;
 
+import com.scooter.factory.ChromeDriverProvider;
+import com.scooter.factory.FirefoxDriverProvider;
+import com.scooter.factory.WebDriverProvider;
+import com.util.Constants;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import locators.FormObject;
+import locators.PageObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -15,6 +21,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -23,58 +30,85 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class OrderFormTest {
     private WebDriver driver;
     private WebDriverWait wait;
-    private final String url = "https://qa-scooter.praktikum-services.ru/";
+    private final String url = Constants.URL;
+
+
+
+
+    private static WebDriverProvider browserProvider(String browserName) {
+            WebDriverProvider driver;
+        switch (browserName.toLowerCase()) {
+            case "chrome":
+                // Инициализация ChromeDriver
+                driver = new ChromeDriverProvider();
+                break;
+            case "firefox":
+                // Инициализация FirefoxDriver
+                driver = new FirefoxDriverProvider();
+                break;
+            default:
+                throw new IllegalArgumentException("Неизвестный браузер: " + browserName);
+        }
+        return driver;
+    }
 
     @BeforeEach
     public void setUp(TestInfo testInfo) {
 
     }
-
-
-
-    static Stream<Arguments> browserProvider() {
+        static Stream<Arguments> browserProvider() {
         return Stream.of(
-                Arguments.of("chrome", "Михаил", "Соловьев", "Минск1", 2, "+12345678901", "01.01.2024", "Без комментариев"),
-                Arguments.of("chrome", "Степан", "Кузьмин", "Минск2", 3, "+12345678902", "01.10.2024", " "),
-                Arguments.of("firefox", "Андрей", "Краснов", "Минск3", 4, "+12345678903", "01.11.2024", "Без комментариев1"),
-                Arguments.of("firefox", "Алексей", "Лобанов", "Минск4", 5, "+12345678904", "20.01.2024", "")
+                Arguments.of(browserProvider("chrome"), "Михаил", "Соловьев", "Минск1", 2, "+12345678901", "01.01.2024", "Без комментариев"),
+                Arguments.of(browserProvider("chrome"), "Степан", "Кузьмин", "Минск2", 3, "+12345678902", "01.10.2024", " "),
+                Arguments.of(browserProvider("firefox"), "Андрей", "Краснов", "Минск3", 4, "+12345678903", "01.11.2024", "Без комментариев1"),
+                Arguments.of(browserProvider("firefox"), "Алексей", "Лобанов", "Минск4", 5, "+12345678904", "20.01.2024", "")
         );
     }
 
     // Закрытие окна cookie
     private void handleCookiePopup(WebDriver driver) {
-        try {
-            WebElement cookiePopup = driver.findElement(By.className("App_CookieConsent__1yUIN"));
+
+        List<WebElement> cookiePopups = driver.findElements(PageObject.cookieOkButton);
+
+        if (!cookiePopups.isEmpty()) {
+            WebElement cookiePopup = cookiePopups.get(0);
             WebElement acceptButton = cookiePopup.findElement(By.tagName("button"));
             acceptButton.click();
-        } catch (NoSuchElementException e) {
         }
     }
 
-    private void fillForm(String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
+    private void fillForm(WebDriver driver, String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
         driver.manage().window().maximize();
         driver.get(url);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         handleCookiePopup(driver);
 
 
-        // Верхняя кнопка "Заказать".
-        WebElement firstButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.Button_Button__ra12g")));
+        // Верхняя кнопка "Заказать"
+        WebElement firstButton = wait.until(ExpectedConditions.elementToBeClickable(FormObject.firstButton));
         firstButton.click();
 
         // Возвращаемся на главную страницу
         driver.navigate().back();
 
-
-        WebElement finishButtonDiv = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div.Home_FinishButton__1_cWm")));
+        //Нижняя кнопка "Заказать"
+        WebElement finishButtonDiv = wait.until(ExpectedConditions.elementToBeClickable(FormObject.finishButtonDiv));
 
         // Прокручиваем элемент в область видимости
+
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", finishButtonDiv);
+        //int yCoordinate = finishButtonDiv.getLocation().getY();
+        //((JavascriptExecutor) driver).executeScript("window.scrollTo(0, " + yCoordinate + ")");
+        //finishButtonDiv.click();
 
         // Нижняя кнопка "Заказать".
-        WebElement buttonInsideDiv = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("button")));
+        WebElement buttonInsideDiv = wait.until(ExpectedConditions.visibilityOfElementLocated(FormObject.finishButtonDiv));
 
-        //WebElement buttonInsideDiv = wait.until(ExpectedConditions.visibilityOf(finishButtonDiv.findElement(By.tagName("button"))));
         buttonInsideDiv.click();
 
         test(name, surname, address, metroStationIndex, phoneNumber, date, comment);
@@ -83,60 +117,61 @@ public class OrderFormTest {
 
     public void test(String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
         // Заполнение поля Имя
-        WebElement nameInput = driver.findElement(By.cssSelector("div.Input_InputContainer__3NykH [placeholder='* Имя']"));
+        WebElement nameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(FormObject.nameInput));
+        //WebElement nameInput = driver.findElement(FormObject.nameInput);
         nameInput.click();
         nameInput.sendKeys(name);
 
         // Заполнение поля Фамилия
-        WebElement surnameInput = driver.findElement(By.cssSelector("div.Input_InputContainer__3NykH [placeholder='* Фамилия']"));
+        WebElement surnameInput = driver.findElement(FormObject.surnameInput);
         surnameInput.click();
         surnameInput.sendKeys(surname);
 
         // Заполнение поля Адрес
-        WebElement addressInput = driver.findElement(By.cssSelector("div.Input_InputContainer__3NykH [placeholder='* Адрес: куда привезти заказ']"));
+        WebElement addressInput = driver.findElement(FormObject.addressInput);
         addressInput.click();
         addressInput.sendKeys(address);
 
         // Заполнение поля Станция метро
-        driver.findElement(By.cssSelector("div.select-search__value [placeholder='* Станция метро']")).click();
-        List<WebElement> metroStations = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("div.select-search__select div")));
+        driver.findElement(FormObject.metroStation).click();
+        List<WebElement> metroStations = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(FormObject.metroStations));
         metroStations.get(metroStationIndex).click();
 
         // Заполнение поля Телефон
-        WebElement phoneInput = driver.findElement(By.cssSelector("div.Input_InputContainer__3NykH [placeholder='* Телефон: на него позвонит курьер']"));
+        WebElement phoneInput = driver.findElement(FormObject.phoneInput);
         phoneInput.click();
         phoneInput.sendKeys(phoneNumber);
 
         // Переход ко второй части формы
-        WebElement nextButton = driver.findElement(By.cssSelector("button.Button_Button__ra12g.Button_Middle__1CSJM"));
+        WebElement nextButton = driver.findElement(FormObject.nextButton);
         nextButton.click();
 
 
         // Заполнение поля Когда привезти самокат
-        WebElement dateField = driver.findElement(By.cssSelector("div.react-datepicker__input-container [placeholder='* Когда привезти самокат']"));
+        WebElement dateField = wait.until(ExpectedConditions.visibilityOfElementLocated(FormObject.dateField));
+       // WebElement dateField = driver.findElement(FormObject.dateField);
         dateField.sendKeys(date);
         dateField.sendKeys(Keys.ENTER);
 
         // Выбор срока аренды
-        driver.findElement(By.cssSelector("div.Dropdown-control")).click();
-        WebElement rentPeriod = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div.Dropdown-menu div")));
+        driver.findElement(FormObject.control).click();
+        WebElement rentPeriod = wait.until(ExpectedConditions.elementToBeClickable(FormObject.rentPeriod));
         rentPeriod.click();
 
         // Выбор цвета скутера
-        WebElement checkbox = driver.findElement(By.cssSelector("div.Order_Checkboxes__3lWSI input[type='checkbox']"));
+        WebElement checkbox = driver.findElement(FormObject.checkbox);
         if (!checkbox.isSelected()) {
             checkbox.click();
         }
 
         // Заполнение поля Комментарии
-        driver.findElement(By.cssSelector("div.Input_InputContainer__3NykH [placeholder='Комментарий для курьера']")).sendKeys(comment);
+        driver.findElement(FormObject.comment).sendKeys(comment);
 
         // Кнопка заказа
-        List<WebElement> buttonsOrder = driver.findElements(By.cssSelector("button.Button_Button__ra12g.Button_Middle__1CSJM"));
+        List<WebElement> buttonsOrder = driver.findElements(FormObject.buttonsOrder);
         for (WebElement button : buttonsOrder) {
             if (button.getText().equals("Заказать")) {
 
-                // Waiting until the element is clickable
                 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                 wait.until(ExpectedConditions.elementToBeClickable(button));
                 button.click();
@@ -146,7 +181,8 @@ public class OrderFormTest {
 
 
         // Кнопка подтверждения заказа
-        List<WebElement> buttonsYes = driver.findElements(By.cssSelector("button.Button_Button__ra12g.Button_Middle__1CSJM"));
+
+        List<WebElement> buttonsYes = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(FormObject.buttonsYes));
         for (WebElement button : buttonsYes) {
             if (button.getText().equals("Да")) {
 
@@ -158,7 +194,7 @@ public class OrderFormTest {
             }
         }
 
-        WebElement modalDialog = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Modal__YZ-d3")));
+        WebElement modalDialog = wait.until(ExpectedConditions.visibilityOfElementLocated(FormObject.modalDialog));
 
         // Check that the text starts with "Заказ оформлен"
         String modalText = modalDialog.getText();
@@ -166,23 +202,17 @@ public class OrderFormTest {
     }
 
 
+
     @ParameterizedTest
     @MethodSource("browserProvider")
-    @Tag("chrome")
-    @Tag("firefox")
-    public void testOrderForm(String browser, String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
-        if ("chrome".equals(browser)) {
-            WebDriverManager.chromedriver().setup();
-            driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        } else if ("firefox".equals(browser)) {
-            WebDriverManager.firefoxdriver().setup();
-            driver = new FirefoxDriver();
-            wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        }
-
-        fillForm(name, surname, address, metroStationIndex, phoneNumber, date, comment);
+    @Tag("browser")
+    public void testFormOnBrowsers(WebDriverProvider browserProvider, String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
+        driver = browserProvider.createDriver();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+        fillForm(driver, name, surname, address, metroStationIndex, phoneNumber, date, comment);
     }
+
+
 
     @AfterEach
     public void tearDown() {
