@@ -6,7 +6,7 @@ public class WebDriverFactory {
     public static WebDriver getDriver(String browser) {
         WebDriverProvider provider;
 
-        switch(browser.toLowerCase()) {
+        switch(browser.trim().toLowerCase()) {
             case "chrome":
                 provider = new ChromeDriverProvider();
                 break;
