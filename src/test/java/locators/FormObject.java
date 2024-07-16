@@ -1,5 +1,7 @@
 package locators;
 
+import com.scooter.OrderFormTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -7,6 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,7 +57,6 @@ public class FormObject {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
-
 
     ////
     // Заполнение поля

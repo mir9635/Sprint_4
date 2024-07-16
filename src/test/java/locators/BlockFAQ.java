@@ -1,6 +1,9 @@
 package locators;
 
+import org.junit.jupiter.params.provider.Arguments;
 import org.openqa.selenium.By;
+
+import java.util.stream.Stream;
 
 public class BlockFAQ {
 
@@ -50,68 +53,50 @@ public class BlockFAQ {
     private By textAnswer7 = By.id("accordion__panel-7");
 
 
-    public By getButtonQuestion0() {
-        return buttonQuestion0;
+    public By getButtonQuestion(int i) {
+        switch (i) {
+            case (0):
+                return buttonQuestion0;
+            case (1):
+                return buttonQuestion1;
+            case (2):
+                return buttonQuestion2;
+            case (3):
+                return buttonQuestion3;
+            case (4):
+                return buttonQuestion4;
+            case (5):
+                return buttonQuestion5;
+            case (6):
+                return buttonQuestion6;
+            case (7):
+                return buttonQuestion7;
+            default:
+                throw new IllegalArgumentException("Invalid index: " + i);
+        }
     }
 
-    public By getTextAnswer0() {
-        return textAnswer0;
-    }
-
-    public By getButtonQuestion1() {
-        return buttonQuestion1;
-    }
-
-    public By getTextAnswer1() {
-        return textAnswer1;
-    }
-
-    public By getButtonQuestion2() {
-        return buttonQuestion2;
-    }
-
-    public By getTextAnswer2() {
-        return textAnswer2;
-    }
-
-    public By getButtonQuestion3() {
-        return buttonQuestion3;
-    }
-
-    public By getTextAnswer3() {
-        return textAnswer3;
-    }
-
-    public By getButtonQuestion4() {
-        return buttonQuestion4;
-    }
-
-    public By getTextAnswer4() {
-        return textAnswer4;
-    }
-
-    public By getButtonQuestion5() {
-        return buttonQuestion5;
-    }
-
-    public By getTextAnswer5() {
-        return textAnswer5;
-    }
-
-    public By getButtonQuestion6() {
-        return buttonQuestion6;
-    }
-
-    public By getTextAnswer6() {
-        return textAnswer6;
-    }
-
-    public By getButtonQuestion7() {
-        return buttonQuestion7;
-    }
-
-    public By getTextAnswer7() {
-        return textAnswer7;
+    public By getTextAnswer(int i) {
+        switch (i) {
+            case (0):
+                return textAnswer0;
+            case (1):
+                return textAnswer1;
+            case (2):
+                return textAnswer2;
+            case (3):
+                return textAnswer3;
+            case (4):
+                return textAnswer4;
+            case (5):
+                return textAnswer5;
+            case (6):
+                return textAnswer6;
+            case (7):
+                return textAnswer7;
+            default:
+                throw new IllegalArgumentException("Invalid index: " + i);
+        }
     }
 
 }

@@ -31,5 +31,14 @@ public class CookiePopup {
         getCookieOkButton().click();
     }
 
+    // Закрытие окна cookie
+    public void handleCookiePopup() {
+        List<WebElement> cookiePopups = getCookiePopup();
+
+        if (!cookiePopups.isEmpty()) {
+            clickCookieOkButton();
+        }
+    }
+
 
 }

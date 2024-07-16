@@ -9,6 +9,9 @@ import locators.CookiePopup;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -17,6 +20,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,6 +52,19 @@ public class AccordionTest {
 
     }
 
+    private static Stream<Arguments> accordionPanelsProvider() {
+        return Stream.of(
+                Arguments.of(0, "Панель 1 не открылась"),
+                Arguments.of(1, "Панель 2 не открылась"),
+                Arguments.of(2, "Панель 3 не открылась"),
+                Arguments.of(3, "Панель 4 не открылась"),
+                Arguments.of(4, "Панель 5 не открылась"),
+                Arguments.of(5, "Панель 6 не открылась"),
+                Arguments.of(6, "Панель 7 не открылась"),
+                Arguments.of(7, "Панель 8 не открылась")
+        );
+    }
+
     private WebDriver driver;
 
     @BeforeEach
@@ -64,20 +81,12 @@ public class AccordionTest {
         }
     }
 
-    private void handleCookiePopup() {
-        CookiePopup cookiePopup = new CookiePopup(driver);
-        List<WebElement> cookiePopups = cookiePopup.getCookiePopup();
-        if (!cookiePopups.isEmpty()) {
-            cookiePopup.clickCookieOkButton();
-        }
-    }
-
-
     // Универсальный метод для тестирования отдельного аккордеона
     private void testIndividualAccordion(By buttonQuestion, By textAnswer, String errorMessage) {
+        CookiePopup cookiePopup = new CookiePopup(driver);
         driver.manage().window().maximize();
         driver.get(url);
-        handleCookiePopup();
+        cookiePopup.handleCookiePopup();
 
         WebElement button = driver.findElement(buttonQuestion);
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", button);
@@ -89,52 +98,13 @@ public class AccordionTest {
         assertTrue(panel.isDisplayed(), errorMessage);
     }
 
-    @Test
-    public void testAccordionPanel0() {
+    @ParameterizedTest
+    @MethodSource("accordionPanelsProvider")
+    public void testAccordionPanel(int panelIndex, String panelErrorMessage) {
         BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion0(), blockFAQ.getTextAnswer0(), "Панель 1 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel1() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion1(), blockFAQ.getTextAnswer1(), "Панель 2 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel2() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion2(), blockFAQ.getTextAnswer2(), "Панель 3 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel3() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion3(), blockFAQ.getTextAnswer3(), "Панель 4 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel4() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion4(), blockFAQ.getTextAnswer4(), "Панель 5 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel5() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion5(), blockFAQ.getTextAnswer5(), "Панель 6 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel6() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion6(), blockFAQ.getTextAnswer6(), "Панель 7 не открылась");
-    }
-
-    @Test
-    public void testAccordionPanel7() {
-        BlockFAQ blockFAQ = new BlockFAQ();
-        testIndividualAccordion(blockFAQ.getButtonQuestion7(), blockFAQ.getTextAnswer7(), "Панель 8 не открылась");
+        By buttonQuestion = blockFAQ.getButtonQuestion(panelIndex);
+        By textAnswer = blockFAQ.getTextAnswer(panelIndex);
+        testIndividualAccordion(buttonQuestion, textAnswer, panelErrorMessage);
     }
 }
 

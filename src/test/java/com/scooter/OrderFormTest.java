@@ -55,23 +55,15 @@ public class OrderFormTest {
         );
     }
 
-    // Закрытие окна cookie
-    private void handleCookiePopup(WebDriver driver) {
-        CookiePopup cookiePopup = new CookiePopup(driver);
 
-        List<WebElement> cookiePopups = cookiePopup.getCookiePopup();
-
-        if (!cookiePopups.isEmpty()) {
-            cookiePopup.clickCookieOkButton();
-        }
-    }
 
     private void fillForm(WebDriver driver, String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
         FormObject formObject = new FormObject(driver);
+        CookiePopup cookiePopup = new CookiePopup(driver);
         driver.manage().window().maximize();
         driver.get(url);
 
-        handleCookiePopup(driver);
+        cookiePopup.handleCookiePopup();
 
         //Клик по первой кнопке "Заказать"
         formObject.clickFirstButton();
@@ -80,11 +72,11 @@ public class OrderFormTest {
         //Клик по второй кнопке "Заказать"
         formObject.clickSecondButton();
 
-        test(formObject, name, surname, address, metroStationIndex, phoneNumber, date, comment);
+        fillAndSubmitOrderForm(formObject, name, surname, address, metroStationIndex, phoneNumber, date, comment);
 
     }
 
-    public void test(FormObject formObject, String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
+    public void fillAndSubmitOrderForm(FormObject formObject, String name, String surname, String address, int metroStationIndex, String phoneNumber, String date, String comment) {
         // Заполнение поля Имя
         formObject.setNameInput(name);
         // Заполнение поля Фамилия
